@@ -30,7 +30,8 @@ class CashCardController {
         Optional<CashCard> cashCardOptional = Optional.ofNullable(findCashCard(requestedId, principal));
         return cashCardOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-//    @GetMapping()
+
+    //    @GetMapping()
 //    private ResponseEntity<Iterable<CashCard>> findAll() {
 //
 //        return ResponseEntity.ok(cashCardRepository.findAll());
@@ -47,9 +48,18 @@ class CashCardController {
         return ResponseEntity.ok(page.getContent());
     }
 
+//    @PostMapping
+//    private ResponseEntity<Void> save(@RequestBody CashCard newCashCardRequest) {
+//        CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
+//        URI locationOfNewCashCard = URI.create("/cashcards/" + savedCashCard.getId());
+//        return ResponseEntity.created(locationOfNewCashCard).build();
+//    }
+
+    // This one uses owner right...
     @PostMapping
-    private ResponseEntity<Void> save(@RequestBody CashCard newCashCardRequest) {
-        CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
+    private ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest, Principal principal) {
+        CashCard cashCardWithOwner = new CashCard(null, newCashCardRequest.amount(), principal.getName());
+        CashCard savedCashCard = cashCardRepository.save(cashCardWithOwner);
         URI locationOfNewCashCard = URI.create("/cashcards/" + savedCashCard.getId());
         return ResponseEntity.created(locationOfNewCashCard).build();
     }
